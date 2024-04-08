@@ -8,7 +8,7 @@ nmcli con modify Проводное\ подключение\ 1 ipv6.method manua
 nmcli con modify Проводное\ подключение\ 1 ipv4.method manual ipv4.addresses 172.16.100.1/26
 
 nmcli con modify Проводное\ подключение\ 2 ipv6.method manual ipv6.addresses 2024:4::1/64
-nmcli con modify Проводное\ подключение\ 2 ipv6.gateway 2024:4::2/64
+nmcli con modify Проводное\ подключение\ 2 ipv6.gateway 2024:4::2
 nmcli con modify Проводное\ подключение\ 2 ipv4.method manual ipv4.addresses 4.4.4.1/30
 
 
