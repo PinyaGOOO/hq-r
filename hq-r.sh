@@ -15,7 +15,7 @@ echo -e "net.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1" >> /etc/sysctl.c
 sysctl -p
 
 dnf install -y nftables
-echo -e 'table inet mynat {\n\tchain my_masquerade {\n\ttype nat hook postrouting priority srcnat;\n\toifname "ens18" masquerade\n\t}\n}' > /etc/nftables/isp.nft
+echo -e 'table inet my_nat {\n\tchain my_masquerade {\n\ttype nat hook postrouting priority srcnat;\n\toifname "ens18" masquerade\n\t}\n}' > /etc/nftables/hq-r.nft
 echo 'include "/etc/nftables/hq-r.nft"' >> /etc/sysconfig/nftables.conf
 systemctl enable --now nftables
 
@@ -29,8 +29,7 @@ sed -i '2i\id=tun1' /etc/NetworkManager/system-connections/ip-tunnel-tun1.nmconn
 
 dnf install -y frr
 systemctl enable --now frr
-vtysh 
-conf t
+
 
 
 
