@@ -27,6 +27,11 @@ sed -i '11i\parent=ens18' /etc/NetworkManager/system-connections/ip-tunnel-tun1.
 sed -i '/id=ip-tunnel-tun1/d' /etc/NetworkManager/system-connections/ip-tunnel-tun1.nmconnection
 sed -i '2i\id=tun1' /etc/NetworkManager/system-connections/ip-tunnel-tun1.nmconnection
 
+dnf install -y frr
+systemctl enable --now frr
+vtysh 
+conf t
+
 
 
 
