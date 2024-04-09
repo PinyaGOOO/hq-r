@@ -1,4 +1,7 @@
 #!/bin/bash
+echo -n "Napishi MAC path:HQ-SRV=HARDWARE-net0: "
+read mac
+
 nmcli con modify ens18 ipv6.method manual ipv6.addresses 2024:1::2/64
 nmcli con modify ens18 ipv6.gateway 2024:1::1
 nmcli con modify ens18 ipv4.method manual ipv4.addresses 1.1.1.2/30
@@ -58,6 +61,24 @@ vtysh -c "configure terminal" \
     -c "ipv6 ospf6 area 0" \
     -c "exit" \
     -c "do write"
+
+dnf install -y dhcp-server
+
+
+echo -e "subnet 172.16.100.0 netmask 255.255.255.192 {\n  range 172.16.100.2 172.16.100.62;\n  option routers 172.16.100.1;\n  default-lease-time 600;\n  max-lease-time 7200;\n}\nhost hq-srv {\n\thardware ethernet $mac;\n\tfixed-address 172.16.100.2;\n}" >> /etc/dhcp/dhcpd.conf
+echo -e "DHCPDARGS=ens19" >>/etc/sysconfig/dhcpd
+systemctl restart dhcpd
+systemctl enable --now dhcpd
+
+useradd -c "Admin" admin -U
+echo "admin:P@ssw0rd" | chpasswd
+useradd -c "Network Admin" network_admin -U
+echo "network_admin:P@ssw0rd" | chpasswd
+
+mkdir /var/backup
+echo -e '#!/bin/bash\n\ndata=$(date +%d.%m.%Y-%H:%M:%S)\nmkdir /var/backup/$data\ncp -r /etc/frr /var/backup/$data\ncp -r /etc/nftables /var/backup/$data\ncp -r /etc/NetworkManager/system-connections /var/backup/$data\ncp -r /etc/dhcp /var/backup/$data\ncd /var/backup\ntar czfv "./$data.tar.gz" ./$data\nrm -r /var/backup/$data' > /var/backup/backup.sh
+chmod +x /var/backup/backup.sh
+/var/backup/backup.sh
 
 
 
