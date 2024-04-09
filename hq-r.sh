@@ -20,7 +20,7 @@ echo -e "net.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1" >> /etc/sysctl.c
 sysctl -p
 
 dnf install -y nftables
-echo -e 'table inet my_nat {\n\tchain my_masquerade {\n\ttype nat hook postrouting priority srcnat;\n\toifname "ens18" masquerade\n\t}\n}' > /etc/nftables/hq-r.nft
+echo -e 'table inet my_nat {\n\tchain prerouting {\n\ttype nat hook prerouting priority filter; policy accept;\n\tip daddr 4.4.4.1 tcp dport 22 dnat ip to 172.16.100.2:2222\n\tip daddr 1.1.1.2 tcp dport 22 dnat ip to 172.16.100.2:2222\n\tip6 daddr 2024:4::1 tcp dport 22 dnat ip6 to [fd24:172::2]:2222\n\tip6 daddr 2024:1::2 tcp dport 22 dnat ip6 to [fd24:172::2]:2222\n\t}\n\n\tchain my_masquerade {\n\ttype nat hook postrouting priority srcnat;\n\toifname "ens18" masquerade\n\t}\n}' > /etc/nftables/hq-r.nft
 echo 'include "/etc/nftables/hq-r.nft"' >> /etc/sysconfig/nftables.conf
 systemctl enable --now nftables
 
@@ -65,7 +65,7 @@ vtysh -c "configure terminal" \
 dnf install -y dhcp-server
 
 
-echo -e "subnet 172.16.100.0 netmask 255.255.255.192 {\n  range 172.16.100.2 172.16.100.62;\n  option routers 172.16.100.1;\n  default-lease-time 600;\n  max-lease-time 7200;\n}\nhost hq-srv {\n\thardware ethernet $mac;\n\tfixed-address 172.16.100.2;\n}" >> /etc/dhcp/dhcpd.conf
+echo -e "subnet 172.16.100.0 netmask 255.255.255.192 {\n  range 172.16.100.2 172.16.100.62;\n  option routers 172.16.100.1;\n  default-lease-time 600;\n  max-lease-time 7200;\n}\nhost hq-srv {\n\thardware ethernet $mac;\n\tfixed-address 172.16.100.2;\n\toption domain-name-servers 8.8.8.8;\n}" >> /etc/dhcp/dhcpd.conf
 echo -e "DHCPDARGS=ens19" >>/etc/sysconfig/dhcpd
 systemctl restart dhcpd
 systemctl enable --now dhcpd
