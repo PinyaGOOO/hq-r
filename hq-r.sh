@@ -21,7 +21,7 @@ nmcli con modify Проводное\ подключение\ 2 ipv6.method manua
 nmcli con modify Проводное\ подключение\ 2 ipv6.gateway 2024:4::2
 nmcli con modify Проводное\ подключение\ 2 ipv4.method manual ipv4.addresses 4.4.4.1/30
 
-echo -e "net.ipv4.ip_forward=1\n\nnet.ipv6.conf.all.forwarding=1\n\nnet.ipv6.conf.enp0s18.accept_ra=2" >> /etc/sysctl.conf
+echo -e "net.ipv4.ip_forward=1\n\nnet.ipv6.conf.all.forwarding=1\n\nnet.ipv6.conf.ens18.accept_ra=2" >> /etc/sysctl.conf
 sysctl -p
 
 echo -e 'table inet my_nat {\n\tchain prerouting {\n\ttype nat hook prerouting priority filter; policy accept;\n\tip daddr 4.4.4.1 tcp dport 22 dnat ip to 172.16.100.2:2222\n\tip daddr 1.1.1.2 tcp dport 22 dnat ip to 172.16.100.2:2222\n\tip6 daddr 2024:4::1 tcp dport 22 dnat ip6 to [fd24:172::2]:2222\n\tip6 daddr 2024:1::2 tcp dport 22 dnat ip6 to [fd24:172::2]:2222\n\t}\n\n\tchain my_masquerade {\n\ttype nat hook postrouting priority srcnat;\n\toifname "ens18" masquerade\n\t}\n}' > /etc/nftables/hq-r.nft
