@@ -14,7 +14,8 @@ systemctl restart dhcpd6
 sed -i '6,$d' /etc/radvd.conf
 echo -e "interface ens19\n{\n\tAdvSendAdvert on;\n\tAdvManagedFlag on;\n\tAdvOtherConfigFlag on;\n\tprefix FD24:172::/122\n\t{\n\t\tAdvOnLink on;\n\t\tAdvAutonomous on;\n\t\tAdvRouterAddr on;\n\t};\n};" >> /etc/radvd.conf
 
-
+systemctl restart radvd
+systemctl enable --now radvd
 
 
 
