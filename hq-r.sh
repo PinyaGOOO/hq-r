@@ -1,4 +1,5 @@
 #!/bin/bash
+dnf remove -y git
 dnf install -y radvd
 dnf install -y nftables
 dnf install -y frr
