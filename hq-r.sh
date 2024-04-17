@@ -73,17 +73,17 @@ echo -e "DHCPDARGS=ens19" >>/etc/sysconfig/dhcpd
 systemctl restart dhcpd
 systemctl enable --now dhcpd
 
-useradd -c "Admin" admin -U
-echo "admin:P@ssw0rd" | chpasswd
-useradd -c "Network Admin" network_admin -U
-echo "network_admin:P@ssw0rd" | chpasswd
+useradd -c "Admin" Admin -U
+echo "Admin:P@ssw0rd" | chpasswd
+useradd -c "Network Admin" Network_admin -U
+echo "Network_admin:P@ssw0rd" | chpasswd
 
 mkdir /var/{backup,backup-script}
 echo -e '#!/bin/bash\n\ndata=$(date +%d.%m.%Y-%H:%M:%S)\nmkdir /var/backup/$data\ncp -r /etc/frr /var/backup/$data\ncp -r /etc/nftables /var/backup/$data\ncp -r /etc/NetworkManager/system-connections /var/backup/$data\ncp -r /etc/dhcp /var/backup/$data\ncd /var/backup\ntar czfv "./$data.tar.gz" ./$data\nrm -r /var/backup/$data' > /var/backup-script/backup.sh
 chmod +x /var/backup-script/backup.sh
 /var/backup-script/backup.sh
 
-hostnamectl set-hostname hq-r; exec bash
+hostnamectl set-hostname HQ-R; exec bash
 
 
 
