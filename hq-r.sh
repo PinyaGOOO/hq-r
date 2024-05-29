@@ -1,9 +1,9 @@
 #!/bin/bash
 dnf remove -y git
-dnf install -y radvd
 dnf install -y nftables
 dnf install -y frr
 dnf install -y dhcp-server
+dnf install -y chrony
 
 nmcli con modify ens18 ipv4.method manual ipv4.addresses 1.1.1.2/30
 nmcli con modify ens18 ipv4.gateway 1.1.1.1
@@ -39,6 +39,7 @@ vtysh -c "configure terminal" \
     -c "passive-interface default" \
     -c "network 172.16.100.0/26 area 0" \
     -c "network 10.10.10.0/30 area 0" \
+    -c "network 4.4.4.0/30 area 0"\
     -c "exit" \
     -c "interface tun1" \
     -c "no ip ospf network broadcast" \
@@ -63,6 +64,21 @@ mkdir /var/{backup,backup-script}
 echo -e '#!/bin/bash\n\ndata=$(date +%d.%m.%Y-%H:%M:%S)\nmkdir /var/backup/$data\ncp -r /etc/frr /var/backup/$data\ncp -r /etc/nftables /var/backup/$data\ncp -r /etc/NetworkManager/system-connections /var/backup/$data\ncp -r /etc/dhcp /var/backup/$data\ncd /var/backup\ntar czfv "./$data.tar.gz" ./$data\nrm -r /var/backup/$data' > /var/backup-script/backup.sh
 chmod +x /var/backup-script/backup.sh
 /var/backup-script/backup.sh
+
+timedatectl set-timezone Europe/Moscow
+sed -i '3s/^/#/' /etc/chrony.conf
+sed -i '4s/^/#/' /etc/chrony.conf
+sed -i '5s/^/#/' /etc/chrony.conf
+sed -i '6s/^/#/' /etc/chrony.conf
+sed -i '7a\server 127.0.0.1 iburst prefer' /etc/chrony.conf
+sed -i '8a\hwtimestamp *' /etc/chrony.conf
+sed -i '9a\local stratum 5' /etc/chrony.conf
+sed -i '10a\allow 0/0' /etc/chrony.conf
+sed -i '11a\allow ::/0' /etc/chrony.conf
+
+systemctl enable --now chronyd
+systemctl restart chronyd
+chronyc sources
 
 hostnamectl set-hostname HQ-R; exec bash
 
