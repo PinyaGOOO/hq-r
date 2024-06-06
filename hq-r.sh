@@ -50,7 +50,7 @@ vtysh -c "configure terminal" \
 
 
 
-echo -e "subnet 172.16.100.0 netmask 255.255.255.240 {\n  range 172.16.100.2 172.16.100.62;\n  option routers 172.16.100.1;\n  default-lease-time 600;\n  max-lease-time 7200;\n}\nhost hq-srv {\n\thardware ethernet BC:24:11:FD:81:60;\n\tfixed-address 172.16.100.2;\n\toption domain-name-servers 8.8.8.8;\n}" >> /etc/dhcp/dhcpd.conf
+echo -e "subnet 172.16.100.0 netmask 255.255.255.240 {\n  range 172.16.100.2 172.16.100.14;\n  option routers 172.16.100.1;\n  default-lease-time 600;\n  max-lease-time 7200;\n}\nhost hq-srv {\n\thardware ethernet BC:24:11:FD:81:60;\n\tfixed-address 172.16.100.2;\n\toption domain-name-servers 8.8.8.8;\n}" >> /etc/dhcp/dhcpd.conf
 echo -e "DHCPDARGS=ens19" >>/etc/sysconfig/dhcpd
 systemctl restart dhcpd
 systemctl enable --now dhcpd
