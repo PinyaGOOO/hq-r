@@ -4,6 +4,7 @@ dnf install -y nftables
 dnf install -y frr
 dnf install -y dhcp-server
 dnf install -y chrony
+dnf install iperf3 -y
 
 nmcli con modify ens18 ipv4.method manual ipv4.addresses 1.1.1.2/30
 nmcli con modify ens18 ipv4.gateway 1.1.1.1
